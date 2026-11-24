@@ -150,12 +150,14 @@ flowchart TD
 - [ ] Monitorización centralizada con Grafana + Prometheus: métricas y paneles de todas las VMs y contenedores, con alertas unificadas
 - [ ] Servidor web con Apache (httpd) en una máquina dedicada: virtual hosts, HTTPS con certificado válido y publicación detrás de Nginx Proxy Manager
 - [ ] Publicar una web real sobre ese servidor: sitio con PHP y MariaDB (login, formularios y base de datos), documentado en el repositorio
+- [ ] Montar un servidor Samba con recursos compartidos y permisos por usuario/grupo, accesible desde Windows y Linux, e integrarlo con Nextcloud como almacenamiento externo (SMB/CIFS)
 - [ ] Segmentar la red en VLANs con OPNsense (NAS/FTP, Minecraft, NPM, Proxmox/PBS), simulada antes en Cisco Packet Tracer
 - [ ] Restringir el acceso al panel de Proxmox a una VLAN de administración
 - [ ] Copia de seguridad externa (regla 3-2-1): una copia de PBS fuera del servidor
 - [ ] Automatizar con Ansible el despliegue y el endurecimiento (SSH, UFW, fail2ban) de las VMs
 - [ ] Documentar cada servicio con una guía de montaje reproducible (con valores de ejemplo, sin datos reales)
 - [ ] Alertas de Grafana por correo/Telegram que sustituyan a los scripts sueltos
+- [ ] Actulizacion 
 
 ---
 
