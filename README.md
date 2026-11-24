@@ -144,10 +144,18 @@ flowchart TD
 - [x] Copias de seguridad con Proxmox Backup Server
 - [x] Scripts de monitorización y alertas por correo
 - [x] UFW y fail2ban en los servidores
-- [ ] Autenticación SSH solo con clave y sin acceso directo de root
 - [x] Revisar firewall y fail2ban en el propio host Proxmox
 - [x] Prueba de restauración de un backup, documentada paso a paso
-- [ ] Monitorización con Zabbix o Grafana + Prometheus
+- [ ] Autenticación SSH solo con clave y sin acceso directo de root
+- [ ] Monitorización centralizada con Grafana + Prometheus: métricas y paneles de todas las VMs y contenedores, con alertas unificadas
+- [ ] Servidor web con Apache (httpd) en una máquina dedicada: virtual hosts, HTTPS con certificado válido y publicación detrás de Nginx Proxy Manager
+- [ ] Publicar una web real sobre ese servidor: sitio con PHP y MariaDB (login, formularios y base de datos), documentado en el repositorio
+- [ ] Segmentar la red en VLANs con OPNsense (NAS/FTP, Minecraft, NPM, Proxmox/PBS), simulada antes en Cisco Packet Tracer
+- [ ] Restringir el acceso al panel de Proxmox a una VLAN de administración
+- [ ] Copia de seguridad externa (regla 3-2-1): una copia de PBS fuera del servidor
+- [ ] Automatizar con Ansible el despliegue y el endurecimiento (SSH, UFW, fail2ban) de las VMs
+- [ ] Documentar cada servicio con una guía de montaje reproducible (con valores de ejemplo, sin datos reales)
+- [ ] Alertas de Grafana por correo/Telegram que sustituyan a los scripts sueltos
 
 ---
 
