@@ -60,7 +60,7 @@ flowchart TD
     PBS --> HDD[("HDD 1 TB<br/>Datastore de backups")]
     PVE --> ZFS[("ZFS RAID1<br/>Espejo")]
     PVE --> LVM[("LVM")]
-    PVE --> MT["Servidor de Monitoreo"]
+    PVE --> MT["LXC 106<br/> Servidor de Monitoreo"]
     PVE --> WEB["VM 105<br/> servidor web HTTPD"]
 
     ZFS -.-> NC
