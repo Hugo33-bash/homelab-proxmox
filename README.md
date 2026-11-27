@@ -41,11 +41,14 @@ Practicar el trabajo real de un administrador de sistemas:
 ```mermaid
 flowchart TD
     Internet(("Internet")) --> DNS["DuckDNS<br/>DNS dinámico"]
+
     DNS --> NPM["LXC 102<br/>Nginx Proxy Manager<br/>HTTPS"]
     DNS --> FTP["VM 104<br/>Servidor FTP<br/>ProFTPD"]
 
     NPM --> NC["VM 100<br/>Nextcloud"]
     NPM --> COL["Collabora Online<br/>Contenedor Docker"]
+    NPM --> WEB["VM 105<br/>Servidor web<br/>Apache / Nginx"]
+    NPM --> MON["LXC 101<br/>Monitorización<br/>Prometheus + Grafana"]
 
     NC --- COL
     NC --- SMB["Samba<br/>Mismo servidor"]
@@ -56,8 +59,18 @@ flowchart TD
     PVE --> NPM
     PVE --> PBS["VM 103<br/>Proxmox Backup Server"]
     PVE --> FTP
+    PVE --> WEB
+    PVE --> MON
+
+    MON -.->|Métricas y supervisión| PVE
+    MON -.->|Métricas| NC
+    MON -.->|Métricas| MC
+    MON -.->|Métricas| FTP
+    MON -.->|Métricas| WEB
+    MON -.->|Métricas| NPM
 
     PBS --> HDD[("HDD 1 TB<br/>Datastore de backups")]
+
     PVE --> ZFS[("ZFS RAID1<br/>Espejo")]
     PVE --> LVM[("LVM")]
 
@@ -65,13 +78,17 @@ flowchart TD
     ZFS -.-> FTP
     ZFS -.-> MC
     ZFS -.-> PBS
+    ZFS -.-> WEB
+
     LVM -.-> NPM
+    LVM -.-> MON
 
     FTP ==>|Backup| HDD
     NPM ==>|Backup| HDD
     MC ==>|Backup| HDD
     NC ==>|Backup| HDD
-
+    WEB ==>|Backup| HDD
+    MON ==>|Backup| HDD
 ```
 
 ---
