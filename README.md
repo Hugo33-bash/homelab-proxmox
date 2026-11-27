@@ -80,15 +80,6 @@ flowchart TD
     SERV ==>|"Backup"| PBS
     PBS --> HDD
     SERV -.->|"Discos de las VM y CT"| STO
-
-    classDef net fill:#e8e8e8,stroke:#555,color:#000
-    classDef svc fill:#d6ecff,stroke:#2f81f7,color:#000
-    classDef bk fill:#ffe9c7,stroke:#d4881f,color:#000
-    classDef sto fill:#d9f2d9,stroke:#2da44e,color:#000
-    class Internet,DNS net
-    class NPM,NC,COL,DB,SMB,FTP,WEB,MC,MON svc
-    class PBS bk
-    class HDD,ZFS,LVM sto
 ```
 
 ---
