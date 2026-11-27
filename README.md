@@ -41,45 +41,37 @@ Practicar el trabajo real de un administrador de sistemas:
 ```mermaid
 flowchart TD
     Internet(("Internet")) --> DNS["DuckDNS<br/>DNS dinámico"]
+    DNS --> NPM["LXC 102<br/>Nginx Proxy Manager<br/>HTTPS"]
+    DNS --> FTP["VM 104<br/>Servidor FTP<br/>ProFTPD"]
 
-    subgraph PVE["Proxmox VE"]
-        subgraph SERV["Servicios"]
-            subgraph CLOUD["Nube personal"]
-                NPM["LXC 102<br/>Nginx Proxy Manager<br/>HTTPS"]
-                NC["VM 100<br/>Nextcloud"]
-                COL["Collabora Online<br/>Docker"]
-                DB[("MariaDB")]
-                SMB["Samba"]
-            end
-            subgraph OTROS["Otros servicios"]
-                FTP["VM 104<br/>Servidor FTP<br/>ProFTPD"]
-                WEB["VM 106<br/>Servidor HTTPD"]
-                MC["VM<br/>Servidor Minecraft"]
-                MON["LXC 105<br/>Monitorización"]
-            end
-        end
+    NPM --> NC["VM 100<br/>Nextcloud"]
+    NPM --> COL["Collabora Online<br/>Contenedor Docker"]
 
-        subgraph BKP["Copias de seguridad"]
-            PBS["VM 103<br/>Proxmox Backup Server"]
-            HDD[("HDD 1 TB<br/>Datastore de backups")]
-        end
-
-        subgraph STO["Almacenamiento"]
-            ZFS[("ZFS RAID1 espejo<br/>VMs 100, 103, 104, 106<br/>Minecraft y LXC 105")]
-            LVM[("LVM<br/>LXC 102")]
-        end
-    end
-
-    DNS --> NPM
-    DNS --> FTP
-    NPM --> NC
-    NPM --> COL
     NC --- COL
-    NC --- SMB
-    NC --- DB
-    SERV ==>|"Backup"| PBS
-    PBS --> HDD
-    SERV -.->|"Discos de las VM y CT"| STO
+    NC --- SMB["Samba<br/>Mismo servidor"]
+    NC --- DB[("MariaDB<br/>Mismo servidor")]
+
+    PVE[["Proxmox VE"]] --> NC
+    PVE --> MC["VM<br/>Servidor Minecraft"]
+    PVE --> NPM
+    PVE --> PBS["VM 103<br/>Proxmox Backup Server"]
+    PVE --> FTP
+
+    PBS --> HDD[("HDD 1 TB<br/>Datastore de backups")]
+    PVE --> ZFS[("ZFS RAID1<br/>Espejo")]
+    PVE --> LVM[("LVM")]
+
+    ZFS -.-> NC
+    ZFS -.-> FTP
+    ZFS -.-> MC
+    ZFS -.-> PBS
+    LVM -.-> NPM
+
+    FTP ==>|Backup| HDD
+    NPM ==>|Backup| HDD
+    MC ==>|Backup| HDD
+    NC ==>|Backup| HDD
+
 ```
 
 ---
