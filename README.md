@@ -38,8 +38,7 @@ Practicar el trabajo real de un administrador de sistemas:
 
 ## Arquitectura
 
-```mermaid
-flowchart TD
+```flowchart TD
     Internet(("Internet")) --> DNS["DuckDNS<br/>DNS dinámico"]
     DNS --> NPM["LXC 102<br/>Nginx Proxy Manager<br/>HTTPS"]
     DNS --> FTP["VM 104<br/>Servidor FTP<br/>ProFTPD"]
@@ -56,8 +55,11 @@ flowchart TD
     PVE --> NPM
     PVE --> PBS["VM 103<br/>Proxmox Backup Server"]
     PVE --> FTP
+    PVE --> MON["LXC 105<br/>Servidor de Monitorización"]
+    PVE --> WEB["VM 106<br/>ServidorHTTPD"]
 
     PBS --> HDD[("HDD 1 TB<br/>Datastore de backups")]
+
     PVE --> ZFS[("ZFS RAID1<br/>Espejo")]
     PVE --> LVM[("LVM")]
 
@@ -65,12 +67,17 @@ flowchart TD
     ZFS -.-> FTP
     ZFS -.-> MC
     ZFS -.-> PBS
+    ZFS -.-> WEB
+    ZFS -.-> MON
+
     LVM -.-> NPM
 
     FTP ==>|Backup| HDD
     NPM ==>|Backup| HDD
     MC ==>|Backup| HDD
     NC ==>|Backup| HDD
+    MON ==>|Backup| HDD
+    WEB ==>|Backup| HDD
 ```
 
 ---
@@ -86,6 +93,8 @@ flowchart TD
 | — | Docker | Collabora Online (`collabora/code`) | Edición de documentos dentro de Nextcloud |
 | — | Docker | MariaDb | Usuarios de NextCloud |
 | 104 | VM | Servidor FTP | Subir ficheros |
+| 105 | LXC | Servidor de Monitoreo con Grafana + Prometheus |
+| 106 | VM | Servidor Web (httpd - Fedora)
 
 **Detalles técnicos a destacar**
 
@@ -147,13 +156,12 @@ flowchart TD
 - [x] Revisar firewall y fail2ban en el propio host Proxmox
 - [x] Prueba de restauración de un backup, documentada paso a paso
 - [ ] Autenticación SSH solo con clave y sin acceso directo de root
-- [ ] Monitorización centralizada con Grafana + Prometheus: métricas y paneles de todas las VMs y contenedores, con alertas unificadas
+- [x] Monitorización centralizada con Grafana + Prometheus: métricas y paneles de todas las VMs y contenedores, con alertas unificadas
 - [ ] Servidor web con Apache (httpd) en una máquina dedicada: virtual hosts, HTTPS con certificado válido y publicación detrás de Nginx Proxy Manager
 - [ ] Publicar una web real sobre ese servidor: sitio con PHP y MariaDB (login, formularios y base de datos), documentado en el repositorio
 - [x] Montar un servidor Samba con recursos compartidos y permisos por usuario/grupo, accesible desde Windows y Linux, e integrarlo con Nextcloud como almacenamiento externo (SMB/CIFS)
 - [ ] Segmentar la red en VLANs con OPNsense (NAS/FTP, Minecraft, NPM, Proxmox/PBS), simulada antes en Cisco Packet Tracer
 - [ ] Restringir el acceso al panel de Proxmox a una VLAN de administración
-- [ ] Copia de seguridad externa (regla 3-2-1): una copia de PBS fuera del servidor
 - [ ] Automatizar con Ansible el despliegue y el endurecimiento (SSH, UFW, fail2ban) de las VMs
 - [ ] Documentar cada servicio con una guía de montaje reproducible (con valores de ejemplo, sin datos reales)
 - [ ] Alertas de Grafana por correo/Telegram que sustituyan a los scripts sueltos
