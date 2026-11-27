@@ -38,46 +38,57 @@ Practicar el trabajo real de un administrador de sistemas:
 
 ## Arquitectura
 
-```flowchart TD
+```mermaid
+flowchart TD
     Internet(("Internet")) --> DNS["DuckDNS<br/>DNS dinámico"]
-    DNS --> NPM["LXC 102<br/>Nginx Proxy Manager<br/>HTTPS"]
-    DNS --> FTP["VM 104<br/>Servidor FTP<br/>ProFTPD"]
 
-    NPM --> NC["VM 100<br/>Nextcloud"]
-    NPM --> COL["Collabora Online<br/>Contenedor Docker"]
+    subgraph PVE["Proxmox VE"]
+        subgraph SERV["Servicios"]
+            subgraph CLOUD["Nube personal"]
+                NPM["LXC 102<br/>Nginx Proxy Manager<br/>HTTPS"]
+                NC["VM 100<br/>Nextcloud"]
+                COL["Collabora Online<br/>Docker"]
+                DB[("MariaDB")]
+                SMB["Samba"]
+            end
+            subgraph OTROS["Otros servicios"]
+                FTP["VM 104<br/>Servidor FTP<br/>ProFTPD"]
+                WEB["VM 106<br/>Servidor HTTPD"]
+                MC["VM<br/>Servidor Minecraft"]
+                MON["LXC 105<br/>Monitorización"]
+            end
+        end
 
+        subgraph BKP["Copias de seguridad"]
+            PBS["VM 103<br/>Proxmox Backup Server"]
+            HDD[("HDD 1 TB<br/>Datastore de backups")]
+        end
+
+        subgraph STO["Almacenamiento"]
+            ZFS[("ZFS RAID1 espejo<br/>VMs 100, 103, 104, 106<br/>Minecraft y LXC 105")]
+            LVM[("LVM<br/>LXC 102")]
+        end
+    end
+
+    DNS --> NPM
+    DNS --> FTP
+    NPM --> NC
+    NPM --> COL
     NC --- COL
-    NC --- SMB["Samba<br/>Mismo servidor"]
-    NC --- DB[("MariaDB<br/>Mismo servidor")]
+    NC --- SMB
+    NC --- DB
+    SERV ==>|"Backup"| PBS
+    PBS --> HDD
+    SERV -.->|"Discos de las VM y CT"| STO
 
-    PVE[["Proxmox VE"]] --> NC
-    PVE --> MC["VM<br/>Servidor Minecraft"]
-    PVE --> NPM
-    PVE --> PBS["VM 103<br/>Proxmox Backup Server"]
-    PVE --> FTP
-    PVE --> MON["LXC 105<br/>Servidor de Monitorización"]
-    PVE --> WEB["VM 106<br/>ServidorHTTPD"]
-
-    PBS --> HDD[("HDD 1 TB<br/>Datastore de backups")]
-
-    PVE --> ZFS[("ZFS RAID1<br/>Espejo")]
-    PVE --> LVM[("LVM")]
-
-    ZFS -.-> NC
-    ZFS -.-> FTP
-    ZFS -.-> MC
-    ZFS -.-> PBS
-    ZFS -.-> WEB
-    ZFS -.-> MON
-
-    LVM -.-> NPM
-
-    FTP ==>|Backup| HDD
-    NPM ==>|Backup| HDD
-    MC ==>|Backup| HDD
-    NC ==>|Backup| HDD
-    MON ==>|Backup| HDD
-    WEB ==>|Backup| HDD
+    classDef net fill:#e8e8e8,stroke:#555,color:#000
+    classDef svc fill:#d6ecff,stroke:#2f81f7,color:#000
+    classDef bk fill:#ffe9c7,stroke:#d4881f,color:#000
+    classDef sto fill:#d9f2d9,stroke:#2da44e,color:#000
+    class Internet,DNS net
+    class NPM,NC,COL,DB,SMB,FTP,WEB,MC,MON svc
+    class PBS bk
+    class HDD,ZFS,LVM sto
 ```
 
 ---
